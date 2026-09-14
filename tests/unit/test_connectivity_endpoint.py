@@ -456,6 +456,24 @@ class TestSchemaValidation:
         assert calls[0][1] == "sk-intl-key"
         assert _get_save_provider_api_key(core_cfg, fake_config, "qwen_intl") == "sk-intl-key"
 
+    def test_stepaudio3_connectivity_reuses_step_keybook_slot(self):
+        fake_config = {
+            "api_key_registry": {
+                "step": {
+                    "config_field": "assistApiKeyStep",
+                }
+            }
+        }
+        core_cfg = {
+            "coreApi": "stepaudio3",
+            "coreApiKey": "sk-stepaudio3-core",
+        }
+
+        assert (
+            _get_save_provider_api_key(core_cfg, fake_config, "stepaudio3")
+            == "sk-stepaudio3-core"
+        )
+
     async def test_save_auto_resolves_builtin_candidate_url(self):
         """保存配置时会自动检测候选 URL，并写入通过的 URL。"""
         calls = []

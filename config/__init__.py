@@ -149,6 +149,8 @@ from .api_profiles import (  # noqa: F401
     DEFAULT_CORE_API_PROFILES,
     DEFAULT_ASSIST_API_PROFILES,
     DEFAULT_ASSIST_API_KEY_FIELDS,
+    CORE_API_PROVIDER_ALIASES,
+    canonical_core_api_provider,
     DEFAULT_CONFIG_DATA,
 )
 

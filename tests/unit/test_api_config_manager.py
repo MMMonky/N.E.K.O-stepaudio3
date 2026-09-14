@@ -735,7 +735,10 @@ class TestProviderExclusion:
 
         # grok joined core as a realtime voice provider (Grok Voice, wss
         # endpoint) in PR #1306 — it has a core_url, so it belongs here.
-        expected_core = {'free', 'qwen', 'qwen_intl', 'openai', 'step', 'gemini', 'glm', 'grok'}
+        expected_core = {
+            'free', 'qwen', 'qwen_intl', 'openai', 'step', 'stepaudio3',
+            'gemini', 'glm', 'grok',
+        }
         actual_core = set(core_profiles.keys())
 
         assert actual_core == expected_core, (
@@ -811,6 +814,31 @@ class TestProviderExclusion:
             else:
                 assert entry.get('restricted') is not True, \
                     f'{pk} should NOT be restricted'
+
+
+class TestStepAudio3CoreProvider:
+
+    @pytest.mark.unit
+    def test_stepaudio3_uses_step_runtime_routes(self, config_manager):
+        """The selectable StepAudio 3 profile keeps Step's runtime services."""
+        _write_core_config(config_manager, {
+            'coreApiKey': 'sk-stepaudio3-test',
+            'coreApi': 'stepaudio3',
+            'assistApi': 'step',
+        })
+
+        cfg = config_manager.get_core_config()
+        assert cfg['CORE_API_TYPE'] == 'step'
+        assert cfg['CORE_MODEL'] == 'stepaudio-3-realtime-preview'
+        assert cfg['CORE_URL'] == 'wss://api.stepfun.com/v1/realtime'
+        assert cfg['ASSIST_API_KEY_STEP'] == 'sk-stepaudio3-test'
+
+        realtime = config_manager.get_model_api_config(
+            'realtime',
+            _core_config=cfg,
+        )
+        assert realtime['model'] == 'stepaudio-3-realtime-preview'
+        assert realtime['api_type'] == 'step'
 
 
 # ---------------------------------------------------------------------------

@@ -28,6 +28,7 @@ from ..shared_state import get_session_manager, get_initialize_character_data
 from utils.file_utils import read_json_async
 from utils.cloudsave_runtime import MaintenanceModeError
 from utils.config_manager import ensure_default_yui_voice_for_free_api
+from config import canonical_core_api_provider
 
 
 CORE_CONFIG_SECRET_SENTINEL = "__NEKO_SECRET_MASKED__"
@@ -151,7 +152,9 @@ def get_core_config_provider_api_key_field(provider, api_key_registry):
     """Resolve a provider's config field through the allowlisted registry."""
     if not isinstance(provider, str) or not isinstance(api_key_registry, dict):
         return None
-    provider_config = api_key_registry.get(provider)
+    provider_config = api_key_registry.get(
+        canonical_core_api_provider(provider)
+    )
     if not isinstance(provider_config, dict):
         return None
     field = provider_config.get('config_field')
