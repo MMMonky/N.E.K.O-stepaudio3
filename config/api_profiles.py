@@ -81,6 +81,10 @@ DEFAULT_CORE_API_PROFILES = {
         'CORE_URL': "wss://api.stepfun.com/v1/realtime",
         'CORE_MODEL': "stepaudio-2.5-realtime",
     },
+    'stepaudio3': {
+        'CORE_URL': "wss://api.stepfun.com/v1/realtime",
+        'CORE_MODEL': "stepaudio-3-realtime-preview",
+    },
     'gemini': {
         # Gemini 使用 google-genai SDK，而非原生 WebSocket
         'CORE_MODEL': "gemini-2.5-flash-native-audio-preview-12-2025",
@@ -90,6 +94,21 @@ DEFAULT_CORE_API_PROFILES = {
         'CORE_MODEL': "grok-voice-latest",
     },
 }
+
+# Some core providers expose multiple model generations while sharing the
+# same transport, native voice catalog, TTS worker, and ASR route.  The raw
+# key remains user-visible and is persisted in ``core_config.json``; runtime
+# consumers use the canonical protocol/provider key so adding a model-specific
+# option does not duplicate provider implementations.
+CORE_API_PROVIDER_ALIASES = {
+    'stepaudio3': 'step',
+}
+
+
+def canonical_core_api_provider(provider_key: object) -> str:
+    """Return the runtime provider key for a configured core provider."""
+    raw = str(provider_key or '').strip().lower()
+    return CORE_API_PROVIDER_ALIASES.get(raw, raw)
 
 DEFAULT_ASSIST_API_PROFILES = {
     'free': {

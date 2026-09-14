@@ -68,6 +68,7 @@ from copy import deepcopy
 from urllib.parse import urlparse, urlunparse
 
 from config import DEFAULT_CONFIG_DATA, GEOIP_FORCE_NON_MAINLAND
+from config import canonical_core_api_provider
 from utils.gptsovits_config import normalize_gsv_api_url
 from utils.steam_state import get_steamworks
 
@@ -1070,10 +1071,18 @@ class CoreConfigMixin:
             config['CORE_API_KEY'] = core_cfg['coreApiKey']
 
         _core_api_provider = core_cfg.get('coreApi') or config['CORE_API_TYPE']
+        _runtime_core_api_provider = canonical_core_api_provider(_core_api_provider)
         _assist_api_provider = core_cfg.get('assistApi')
         if not _assist_api_provider:
             _assist_api_provider = 'free' if _core_api_provider == 'free' else 'qwen'
-        _fallback_providers = {_core_api_provider, _assist_api_provider}
+        # Keep both the persisted profile key and its runtime alias in the
+        # fallback set.  ``stepaudio3`` owns the same StepFun credential slot
+        # as ``step`` while remaining a separate selectable core profile.
+        _fallback_providers = {
+            _core_api_provider,
+            _runtime_core_api_provider,
+            _assist_api_provider,
+        }
         _core_key_fallback = config['CORE_API_KEY'] if config['CORE_API_KEY'] != 'free-access' else ''
 
         def _fb(provider: str) -> str:
@@ -1149,7 +1158,6 @@ class CoreConfigMixin:
 
         # Core API profile
         core_api_value = core_cfg.get('coreApi') or config['CORE_API_TYPE']
-        config['CORE_API_TYPE'] = core_api_value
         core_profile = core_api_profiles.get(core_api_value)
         if core_profile:
             config.update(core_profile)
@@ -1158,6 +1166,11 @@ class CoreConfigMixin:
             )
             if resolved_core_url:
                 config['CORE_URL'] = resolved_core_url
+        # Downstream realtime/TTS/voice/ASR consumers select implementations
+        # by canonical provider key.  The raw ``coreApi`` stays in the saved
+        # config and in the settings response, so the new profile remains
+        # independently selectable without duplicating Step code.
+        config['CORE_API_TYPE'] = canonical_core_api_provider(core_api_value)
 
         # Assist API profile
         # 显式选择的 assistApi 一律被尊重，即使 coreApi=free。这样用户可以组合

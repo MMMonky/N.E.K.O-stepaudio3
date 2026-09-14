@@ -148,6 +148,9 @@ _REALTIME_DIALECT_ALIASES = {
     "openai": "gpt",
     "gpt": "gpt",
     "qwen_intl": "qwen",
+    # StepAudio 3 is a separately selectable core profile, but it speaks the
+    # existing StepFun Realtime wire dialect and shares Step native services.
+    "stepaudio3": "step",
 }
 
 

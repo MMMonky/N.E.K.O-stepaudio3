@@ -332,6 +332,7 @@ def test_placeholder_promotes_same_provider_key_when_core_key_is_empty(
 def test_provider_key_lookup_rejects_non_assist_secret_fields(core_config_router):
     registry = {
         'qwen': {'config_field': 'assistApiKeyQwen'},
+        'step': {'config_field': 'assistApiKeyStep'},
         'vllm_omni': {'config_field': 'ttsModelApiKey'},
         'unsafe': {'config_field': 'mcpToken'},
     }
@@ -339,6 +340,12 @@ def test_provider_key_lookup_rejects_non_assist_secret_fields(core_config_router
     assert (
         core_config_router.get_core_config_provider_api_key_field('qwen', registry)
         == 'assistApiKeyQwen'
+    )
+    assert (
+        core_config_router.get_core_config_provider_api_key_field(
+            'stepaudio3', registry
+        )
+        == 'assistApiKeyStep'
     )
     assert (
         core_config_router.get_core_config_provider_api_key_field('vllm_omni', registry)

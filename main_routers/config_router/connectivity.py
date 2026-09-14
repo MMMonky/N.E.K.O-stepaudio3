@@ -20,6 +20,7 @@ Split out of the former monolithic ``main_routers/config_router.py``.
 """
 
 from ._shared import logger, router
+from config import canonical_core_api_provider
 
 import asyncio
 import ssl
@@ -622,11 +623,11 @@ async def _test_connectivity_candidates(
 
 def _get_save_provider_api_key(core_cfg: dict, api_config: dict, provider_key: str) -> str:
     """Extract the provider's API key from the config being saved."""
-    provider_key = str(provider_key or "").strip()
+    provider_key = canonical_core_api_provider(provider_key)
     if provider_key == "free":
         return "free-access"
 
-    core_provider = str(core_cfg.get("coreApi") or "").strip()
+    core_provider = canonical_core_api_provider(core_cfg.get("coreApi"))
     core_key = str(core_cfg.get("coreApiKey") or "").strip()
 
     registry_entry = (api_config.get("api_key_registry") or {}).get(provider_key, {})

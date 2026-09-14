@@ -4189,6 +4189,15 @@ async def test_realtime_apply_tools_to_session_step_emits_function_tools_only():
     assert any(t.get("type") == "function" for t in tools)
 
 
+@pytest.mark.asyncio
+async def test_realtime_apply_tools_to_session_stepaudio3_reuses_step_dialect():
+    client, sent = _make_rt_client("stepaudio3")
+    await client.apply_tools_to_session()
+    tools = sent[0]["session"]["tools"]
+    assert all(t.get("type") != "web_search" for t in tools)
+    assert any(t.get("type") == "function" for t in tools)
+
+
 # ============================================================================
 # Summary-mode（长回复 emotion-tier 摘要路径）
 # ============================================================================

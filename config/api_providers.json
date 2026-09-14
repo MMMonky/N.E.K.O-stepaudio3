@@ -37,6 +37,13 @@
       "core_url": "wss://api.stepfun.com/v1/realtime",
       "core_model": "step-audio-2"
     },
+    "stepaudio3": {
+      "key": "stepaudio3",
+      "name": "StepAudio 3 Realtime（阶跃星辰）",
+      "description": "旗舰全双工实时语音模型，当前 Preview 版本限时免费",
+      "core_url": "wss://api.stepfun.com/v1/realtime",
+      "core_model": "stepaudio-3-realtime-preview"
+    },
     "gemini": {
       "key": "gemini",
       "name": "Gemini Live（Google）",

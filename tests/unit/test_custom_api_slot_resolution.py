@@ -950,6 +950,11 @@ class TestRealtimeDialectNormalisation:
         assert canonical_realtime_dialect('qwen_intl') == 'qwen'
 
     @pytest.mark.unit
+    def test_stepaudio3_maps_to_the_step_wire_branch(self):
+        from main_logic.omni_realtime_client._shared import canonical_realtime_dialect
+        assert canonical_realtime_dialect('stepaudio3') == 'step'
+
+    @pytest.mark.unit
     def test_unknown_and_legacy_values_pass_through(self):
         from main_logic.omni_realtime_client._shared import canonical_realtime_dialect
         assert canonical_realtime_dialect('gpt') == 'gpt'
